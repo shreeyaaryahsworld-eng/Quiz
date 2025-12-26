@@ -27,7 +27,6 @@ a:hover {
 
 body {
   margin: 0;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
 }
@@ -67,4 +66,91 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+/* ---- Quiz layout tweaks ---- */
+
+/* Smooth background transition when route mounts */
+.quiz-page {
+  animation: quiz-fade-in 320ms ease-out;
+}
+
+@keyframes quiz-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Card glow for focus */
+.quiz-card {
+  box-shadow:
+    0 20px 45px rgba(15, 23, 42, 0.55),
+    0 0 0 1px rgba(148, 163, 184, 0.3);
+}
+
+/* Option hover ripple (subtle) */
+.quiz-option {
+  position: relative;
+  overflow: hidden;
+}
+
+.quiz-option::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background: radial-gradient(circle at center,
+    rgba(129, 140, 248, 0.18),
+    transparent 60%);
+  transition: opacity 180ms ease-out;
+}
+
+.quiz-option:hover::after {
+  opacity: 1;
+}
+
+/* Selected state border animation */
+.quiz-option--selected {
+  transition: box-shadow 160ms ease-out, border-color 160ms ease-out;
+  box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.65),
+              0 10px 20px rgba(15, 23, 42, 0.18);
+}
+
+/* Next button pulse on enabled hover */
+.quiz-next:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(79, 70, 229, 0.45);
+}
+
+.quiz-next:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 10px rgba(79, 70, 229, 0.35);
+}
+
+/* Respect disabled Tailwind styles but smooth them */
+.quiz-next:disabled {
+  transition: opacity 120ms ease-out, box-shadow 120ms ease-out;
+}
+/* app.css */
+
+.quiz-bg {
+  background: radial-gradient(circle at top, #4f46e5 0, #384169 55%, #2d555f 100%);
+}
+
+.quiz-card {
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.55);
+}
+
+.quiz-option-selected {
+  background: rgba(129, 140, 248, 0.12);
+  border-color: #4f46e5;
+}
+
+.quiz-option-default {
+  background: rgba(248, 250, 252, 0.7);
 }

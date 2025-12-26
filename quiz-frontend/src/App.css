@@ -39,3 +39,22 @@
 .read-the-docs {
   color: #888;
 }
+/* app.css */
+
+.quiz-bg {
+  background: radial-gradient(circle at top, #4f46e5 0, #384169 55%, #2d555f 100%);
+}
+
+.quiz-card {
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.55);
+}
+
+.quiz-option-selected {
+  background: rgba(129, 140, 248, 0.12);
+  border-color: #4f46e5;
+}
+
+.quiz-option-default {
+  background: rgba(248, 250, 252, 0.7);
+}
