@@ -174,15 +174,13 @@ const CareerQuiz = () => {
   }
 
   if (currentScreen === "results") {
-    if (isPremium) {
       return (
         <QuizResults
-          result={result}
+          showResults={result}
           onRetake={handleRetake}
           onHome={() => setCurrentScreen("home")}
         />
       );
-    }
 
     // 🔒 LOCKED VIEW
     return (

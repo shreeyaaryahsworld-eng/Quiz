@@ -142,10 +142,10 @@ const QuizResults = ({ showResults, onRetake, onHome }) => {
 
         {/* Action Buttons */}
         <div className="flex justify-center items-center gap-3 sm:gap-4 mt-10 flex-nowrap overflow-hidden">
-          <button onClick={onRetake} className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-md">Retake Quiz</button>
-          <button onClick={onHome} className="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-md">Back to Home</button>
-          <button onClick={() => navigate("/interest-form")} className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-md">Get Assessment</button>
-          <button onClick={downloadReport} className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md">Download Report</button>
+          <button onClick={onRetake} className="bg-indigo-600 hover:bg-indigo-700 text-black font-semibold py-2 px-4 rounded-md">Retake Quiz</button>
+          <button onClick={onHome} className="bg-gray-600 hover:bg-gray-700 text-black font-semibold py-2 px-4 rounded-md">Back to Home</button>
+          <button onClick={() => navigate("/interest-form")} className="bg-green-600 hover:bg-green-700 text-black font-semibold py-2 px-4 rounded-md">Get Assessment</button>
+          <button onClick={downloadReport} className="bg-blue-600 hover:bg-blue-700 text-black font-semibold py-2 px-4 rounded-md">Download Report</button>
         </div>
       </div>
     </div>

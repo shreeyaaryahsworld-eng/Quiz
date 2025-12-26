@@ -1,15 +1,20 @@
 const ProgressReport = require("../models/ProgressReport");
 
 
-// 1. GET PROGRESS REPORT
+const mongoose = require("mongoose");
+
 exports.getProgressReport = async (req, res) => {
   try {
     const { userId } = req.params;
-    if (!userId) return res.status(400).json({ message: "User ID is required" });
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+
+    if (!mongoose.isValidObjectId(userId)) {
+      return res.status(400).json({ success: false, message: "Invalid userId" });
+    }
 
     const report = await ProgressReport.findOne({ userId });
-    
-    // It is okay to return null if no report exists yet
     res.status(200).json({ success: true, data: report || {} });
   } catch (error) {
     console.error("Error fetching progress:", error);
@@ -17,10 +22,14 @@ exports.getProgressReport = async (req, res) => {
   }
 };
 
+
 // 2. SAVE PARTIAL PROGRESS (Run on "Next" Button)
 exports.saveQuizProgress = async (req, res) => {
   try {
     const { userId, stage, currentQuestionIndex, answers, totalQuestions, categoryName } = req.body;
+ if (!mongoose.isValidObjectId(userId)) {
+      return res.status(400).json({ success: false, message: "Invalid userId" });
+    }
 
     // Calculate percentage (e.g. 5/20 = 25%)
     const percentage = Math.round(((currentQuestionIndex) / totalQuestions) * 100);
@@ -51,24 +60,71 @@ exports.saveQuizProgress = async (req, res) => {
   }
 };
 
-// 3. SAVE FINAL RESULT (Run on Quiz Finish)
 exports.saveResult = async (req, res) => {
   try {
     const { userId, stage, resultData, categoryName } = req.body;
+     if (!mongoose.isValidObjectId(userId)) {
+      return res.status(400).json({ success: false, message: "Invalid userId" });
+    }
+
+    const { answers } = resultData; // [{ domain, isCorrect }, ...]
+
+    // 1. Total score
+    const totalCorrect = answers.filter(a => a.isCorrect).length;
+    const maxScore = answers.length;
+    const overallPercent = maxScore > 0 ? Math.round((totalCorrect / maxScore) * 100) : 0;
+
+    // 2. Per-domain scores
+    const domainTotals = {};
+    const domainCorrect = {};
+
+    for (const { domain, isCorrect } of answers) {
+      if (!domainTotals[domain]) {
+        domainTotals[domain] = 0;
+        domainCorrect[domain] = 0;
+      }
+      domainTotals[domain] += 1;
+      if (isCorrect) domainCorrect[domain] += 1;
+    }
+
+    const allScores = Object.entries(domainTotals).map(([domain, total]) => {
+      const correct = domainCorrect[domain] || 0;
+      const percent = total > 0 ? Math.round((correct / total) * 100) : 0;
+      return [domain, percent];
+    });
+
+    // sort high → low
+    allScores.sort((a, b) => b[1] - a[1]);
+    const topPaths = allScores.slice(0, 3);
+
+    // 3. Simple personalityType placeholder
+    const personalityType = "Explorer"; // or derive from pattern later
+
+    const enrichedResult = {
+      answers,
+      totalCorrect,
+      maxScore,
+      overallPercent,
+      allScores,
+      topPaths,
+      personalityType
+    };
 
     const updateOps = {
       $set: {
-        [`stageResults.${stage}`]: resultData, // Store Final Result
-        [`categories.${categoryName}`]: 100    // Force 100% completion
+        [`stageResults.${stage}`]: enrichedResult,
+        [`categories.${categoryName}`]: 100
       },
-      // Clear the partial progress since they are done
-      $unset: {
-        [`stageProgress.${stage}`]: "" 
-      }
+      $unset: { [`stageProgress.${stage}`]: "" }
     };
 
-    await ProgressReport.findOneAndUpdate({ userId }, updateOps, { new: true, upsert: true });
-    res.status(200).json({ success: true });
+    const updated = await ProgressReport.findOneAndUpdate(
+      { userId },
+      updateOps,
+      { new: true, upsert: true }
+    );
+
+    res.status(200).json({ success: true, result: enrichedResult, data: updated });
   } catch (error) {
     console.error("Save Result Error:", error);
     res.status(500).json({ success: false });
@@ -79,6 +135,9 @@ exports.saveResult = async (req, res) => {
 exports.resetStageProgress = async (req, res) => {
   try {
     const { userId, stage, categoryName } = req.body;
+ if (!mongoose.isValidObjectId(userId)) {
+      return res.status(400).json({ success: false, message: "Invalid userId" });
+    }
 
     const updateOps = {
       $unset: {

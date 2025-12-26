@@ -28,7 +28,7 @@ const QuizGame = ({
 
   const progressPercent =
     totalQuestions > 0
-      ? Math.round(((currentQuestionIndex + 1) / totalQuestions) * 100)
+      ? Math.round(((currentQuestionIndex)/ totalQuestions) * 100)
       : 0;
 
   // RESULTS VIEW

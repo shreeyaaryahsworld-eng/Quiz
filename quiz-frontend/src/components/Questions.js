@@ -1,380 +1,438 @@
 export const careerQuizQuestions = [
-  // TECHNOLOGY
-  {
-    id: "tech1",
-    domain: "technology",
-    question: "Which of these programming languages is primarily object‑oriented?",
-    options: ["Java", "SQL", "HTML", "CSS"],
-    correctAnswer: "Java"
-  },
-  {
-    id: "tech2",
-    domain: "technology",
-    question: "In a typical web application, what is the MAIN role of an API?",
-    options: [
-      "Allow different software systems to exchange data",
-      "Store large files permanently",
-      "Design the visual layout of pages",
-      "Secure Wi‑Fi connections in an office"
-    ],
-    correctAnswer: "Allow different software systems to exchange data"
-  },
+ {
+  id: "med1",
+  domain: "media",
+  question: "Your school is planning an annual day. Which role excites you the MOST?",
+  options: [
+    "Planning what to say on stage and who will perform",
+    "Checking lights and sound systems",
+    "Arranging chairs and tickets",
+    "Helping teachers take attendance"
+  ],
+  correctAnswer: "Planning what to say on stage and who will perform"
+},
+{
+  id: "med2",
+  domain: "media",
+  question: "You see an interesting event in your city. What are you MOST likely to do?",
+  options: [
+    "Take photos and short videos to share the story",
+    "Collect money for tickets",
+    "Help manage the crowd quietly",
+    "Leave early to avoid traffic"
+  ],
+  correctAnswer: "Take photos and short videos to share the story"
+},
+{
+  id: "med3",
+  domain: "media",
+  question: "When you watch a movie, what do you notice FIRST?",
+  options: [
+    "How the scenes are shot and edited",
+    "How long the movie is",
+    "How many people are in the hall",
+    "What snacks everyone is eating"
+  ],
+  correctAnswer: "How the scenes are shot and edited"
+},
+{
+  id: "tech1",
+  domain: "technology",
+  question: "Your tablet starts working very slowly. What do you MOST want to do?",
+  options: [
+    "Explore settings and apps to fix it",
+    "Ask someone else and forget about it",
+    "Stop using it and go play outside",
+    "Complain that gadgets are useless"
+  ],
+  correctAnswer: "Explore settings and apps to fix it"
+},
+{
+  id: "tech2",
+  domain: "technology",
+  question: "You find a new website builder for kids. What interests you MOST?",
+  options: [
+    "Trying to make your own simple website",
+    "Only looking at the pictures",
+    "Checking how expensive it is",
+    "Closing it and opening a game"
+  ],
+  correctAnswer: "Trying to make your own simple website"
+},
 {
   id: "tech3",
   domain: "technology",
-  question: "You have a large, sorted list of user IDs and need to check quickly if a given ID exists. Which algorithm is MOST appropriate?",
+  question: "In class, which project would you choose?",
   options: [
-    "Binary search",
-    "Linear search from start to end",
-    "Randomly checking positions in the list",
-    "Bubble sort"
+    "Create a small game or quiz on the computer",
+    "Make a poster on chart paper",
+    "Write a long essay by hand",
+    "Memorise a poem to recite"
   ],
-  correctAnswer: "Binary search"
+  correctAnswer: "Create a small game or quiz on the computer"
+}
+,{
+  id: "health1",
+  domain: "healthcare",
+  question: "A classmate falls and hurts their knee. What do you naturally do FIRST?",
+  options: [
+    "Go to help, check the injury, and call an adult",
+    "Look from far away and talk about it",
+    "Walk away because it is not your problem",
+    "Laugh nervously and do nothing"
+  ],
+  correctAnswer: "Go to help, check the injury, and call an adult"
 },
+{
+  id: "health2",
+  domain: "healthcare",
+  question: "Your teacher asks for a volunteer in the science lab. Which task would you pick?",
+  options: [
+    "Carefully measure and mix liquids using safety rules",
+    "Write names on labels only",
+    "Clean the whiteboard",
+    "Distribute notebooks"
+  ],
+  correctAnswer: "Carefully measure and mix liquids using safety rules"
+},
+{
+  id: "health3",
+  domain: "healthcare",
+  question: "Which after-school club would you MOST enjoy?",
+  options: [
+    "First-aid and health awareness club",
+    "Drama and comedy club",
+    "Stamp collection club",
+    "Debate club only about politics"
+  ],
+  correctAnswer: "First-aid and health awareness club"
+}
+,{
+  id: "cre1",
+  domain: "creative",
+  question: "The teacher announces a storytelling contest. What excites you MOST?",
+  options: [
+    "Inventing an unusual story or poem",
+    "Keeping time with a stopwatch",
+    "Arranging chairs for the audience",
+    "Collecting names of participants"
+  ],
+  correctAnswer: "Inventing an unusual story or poem"
+},
+{
+  id: "cre2",
+  domain: "creative",
+  question: "You get a blank notebook. How would you MOST like to use it?",
+  options: [
+    "Fill it with drawings, songs or comic strips",
+    "Write only homework notes",
+    "Keep it empty so it stays neat",
+    "Use it as a rough book for sums"
+  ],
+  correctAnswer: "Fill it with drawings, songs or comic strips"
+},
+{
+  id: "cre3",
+  domain: "creative",
+  question: "For a birthday gift, what would you MOST enjoy making?",
+  options: [
+    "A handmade card or decorated item",
+    "A list of rules for the party",
+    "A budget sheet for expenses",
+    "A detailed cleaning plan"
+  ],
+  correctAnswer: "A handmade card or decorated item"
+}
+,{
+  id: "edu1",
+  domain: "education",
+  question: "During revision, how would you MOST like to help classmates?",
+  options: [
+    "Explain difficult topics in a simple way",
+    "Tell them to study on their own",
+    "Only share your notes silently",
+    "Avoid questions so you can finish first"
+  ],
+  correctAnswer: "Explain difficult topics in a simple way"
+},
+{
+  id: "edu2",
+  domain: "education",
+  question: "Your teacher is absent. What role would you enjoy MOST?",
+  options: [
+    "Lead the class through the worksheet calmly",
+    "Control who talks and write names on board",
+    "Sit quietly and do nothing extra",
+    "Ask to leave class early"
+  ],
+  correctAnswer: "Lead the class through the worksheet calmly"
+},
+{
+  id: "edu3",
+  domain: "education",
+  question: "Which activity sounds MOST fun?",
+  options: [
+    "Designing a fun way to teach younger kids tables",
+    "Sorting library books by colour only",
+    "Checking if classroom windows are closed",
+    "Counting how many desks are in the room"
+  ],
+  correctAnswer: "Designing a fun way to teach younger kids tables"
+},
+{
+  id: "fin1",
+  domain: "finance",
+  question: "Your class is running a charity sale. Which task would you pick?",
+  options: [
+    "Keep track of money collected and spent",
+    "Hang posters on the walls",
+    "Pack items into boxes",
+    "Announce the sale on the mic"
+  ],
+  correctAnswer: "Keep track of money collected and spent"
+},
+{
+  id: "fin2",
+  domain: "finance",
+  question: "You receive pocket money each month. What interests you MOST?",
+  options: [
+    "Planning how much to save and how much to spend",
+    "Spending it all at once",
+    "Letting someone else decide for you",
+    "Forgetting where you kept it"
+  ],
+  correctAnswer: "Planning how much to save and how much to spend"
+},
+{
+  id: "fin3",
+  domain: "finance",
+  question: "Which project sounds MOST like you?",
+  options: [
+    "Comparing prices to find the best value for a class trip",
+    "Designing a new class logo",
+    "Writing a poem about school life",
+    "Checking who came late to school"
+  ],
+  correctAnswer: "Comparing prices to find the best value for a class trip"
+}
+,{
+  id: "sci1",
+  domain: "science",
+  question: "You notice a plant in the school garden is not growing well. What do you MOST want to do?",
+  options: [
+    "Observe it and test different ways to help it grow",
+    "Ignore it because it’s just a plant",
+    "Ask someone else to move it",
+    "Take a selfie with it"
+  ],
+  correctAnswer: "Observe it and test different ways to help it grow"
+},
+{
+  id: "sci2",
+  domain: "science",
+  question: "Which type of video would you rather watch?",
+  options: [
+    "Experiments explaining how things work",
+    "Celebrity gossip and rumours",
+    "Prank videos only",
+    "Random dance clips"
+  ],
+  correctAnswer: "Experiments explaining how things work"
+},
+{
+  id: "sci3",
+  domain: "science",
+  question: "During a science fair, which role attracts you MOST?",
+  options: [
+    "Designing an experiment and recording results",
+    "Decorating the stalls only",
+    "Serving snacks to visitors",
+    "Managing the entry gate"
+  ],
+  correctAnswer: "Designing an experiment and recording results"
+}
+,{
+  id: "eng1",
+  domain: "engineering",
+  question: "You get a box of building blocks and small parts. What do you MOST enjoy?",
+  options: [
+    "Creating structures that can actually stand and move",
+    "Sorting blocks only by colour",
+    "Stacking them randomly and knocking them down",
+    "Using them as paperweights"
+  ],
+  correctAnswer: "Creating structures that can actually stand and move"
+},
+{
+  id: "eng2",
+  domain: "engineering",
+  question: "A bridge in a model city collapses. What interests you MOST?",
+  options: [
+    "Figuring out why it broke and how to rebuild it stronger",
+    "Laughing and moving to another game",
+    "Painting the broken pieces",
+    "Leaving it for someone else to fix"
+  ],
+  correctAnswer: "Figuring out why it broke and how to rebuild it stronger"
+},
+{
+  id: "eng3",
+  domain: "engineering",
+  question: "Which school project would you choose?",
+  options: [
+    "Design a working model (like a robot or simple machine)",
+    "Write a story about imaginary characters",
+    "Organise a singing competition",
+    "Plan a picnic menu"
+  ],
+  correctAnswer: "Design a working model (like a robot or simple machine)"
+}
+,{
+  id: "des1",
+  domain: "design",
+  question: "Your class needs a new notice board layout. What appeals to you MOST?",
+  options: [
+    "Choosing colours, fonts and arranging items neatly",
+    "Pinning papers anywhere quickly",
+    "Counting how many pins are used",
+    "Leaving the board plain"
+  ],
+  correctAnswer: "Choosing colours, fonts and arranging items neatly"
+},
+{
+  id: "des2",
+  domain: "design",
+  question: "You open a new app. What catches your attention FIRST?",
+  options: [
+    "How the screens look and how easy it feels to use",
+    "Only how loud the notification sound is",
+    "How much storage it takes",
+    "How fast you can close it"
+  ],
+  correctAnswer: "How the screens look and how easy it feels to use"
+},
+{
+  id: "des3",
+  domain: "design",
+  question: "For a school competition, which task would you choose?",
+  options: [
+    "Create the logo and overall look for the event",
+    "Read rules aloud",
+    "Check attendance",
+    "Arrange water bottles"
+  ],
+  correctAnswer: "Create the logo and overall look for the event"
+}
+,
+{
+  id: "bus1",
+  domain: "business",
+  question: "Your class runs a mini snack stall. What role excites you MOST?",
+  options: [
+    "Plan prices and ways to attract more customers",
+    "Only stand near the table",
+    "Taste snacks without permission",
+    "Pack leftover food"
+  ],
+  correctAnswer: "Plan prices and ways to attract more customers"
+},
+{
+  id: "bus2",
+  domain: "business",
+  question: "When you see a successful shop, what are you MOST curious about?",
+  options: [
+    "How they convince people to buy and manage money",
+    "What colour their signboard is",
+    "How loud their music is",
+    "How far it is from your home"
+  ],
+  correctAnswer: "How they convince people to buy and manage money"
+},
+{
+  id: "bus3",
+  domain: "business",
+  question: "Which project sounds MOST interesting?",
+  options: [
+    "Starting a small class business for a day",
+    "Drawing only the school building",
+    "Cleaning cupboards",
+    "Counting how many trees are in school"
+  ],
+  correctAnswer: "Starting a small class business for a day"
+}
+,{
+  id: "leg1",
+  domain: "legal",
+  question: "Two classmates argue about who owns a book. What do you MOST want to do?",
+  options: [
+    "Listen to both sides and suggest a fair solution",
+    "Ignore them and walk away",
+    "Pick a side without knowing facts",
+    "Laugh and encourage the fight"
+  ],
+  correctAnswer: "Listen to both sides and suggest a fair solution"
+},
+{
+  id: "leg2",
+  domain: "legal",
+  question: "Which school activity sounds MOST like you?",
+  options: [
+    "Reading rules and explaining why they matter",
+    "Breaking rules to see what happens",
+    "Pretending rules do not exist",
+    "Only memorising rules for punishment fear"
+  ],
+  correctAnswer: "Reading rules and explaining why they matter"
+},
+{
+  id: "leg3",
+  domain: "legal",
+  question: "Your teacher assigns a debate on a difficult issue. Which role would you choose?",
+  options: [
+    "Prepare strong arguments using facts and examples",
+    "Cheer loudly from the audience",
+    "Only design the invitation card",
+    "Avoid the event altogether"
+  ],
+  correctAnswer: "Prepare strong arguments using facts and examples"
+}
+,
+{
+  id: "cul1",
+  domain: "culinary",
+  question: "At home, which task do you enjoy MOST?",
+  options: [
+    "Helping to cook or try new recipes",
+    "Only eating when food is ready",
+    "Avoiding the kitchen completely",
+    "Stacking plates without noticing food"
+  ],
+  correctAnswer: "Helping to cook or try new recipes"
+},
+{
+  id: "cul2",
+  domain: "culinary",
+  question: "Your school is hosting a food fest. What role interests you MOST?",
+  options: [
+    "Plan what dishes to make and how they will look",
+    "Collect entry tickets only",
+    "Count how many chairs are needed",
+    "Stand near the gate"
+  ],
+  correctAnswer: "Plan what dishes to make and how they will look"
+},
+{
+  id: "cul3",
+  domain: "culinary",
+  question: "You watch a cooking video online. What are you MOST likely to do next?",
+  options: [
+    "Try a simpler version of the recipe yourself",
+    "Scroll away immediately",
+    "Only read the comments",
+    "Forget what you watched"
+  ],
+  correctAnswer: "Try a simpler version of the recipe yourself"
+}
+,
 
-
-  // HEALTHCARE
-  {
-    id: "health1",
-    domain: "healthcare",
-    question: "Which body system is MOST directly responsible for transporting oxygen to tissues?",
-    options: [
-      "Circulatory system",
-      "Digestive system",
-      "Endocrine system",
-      "Urinary system"
-    ],
-    correctAnswer: "Circulatory system"
-  },
-  {
-    id: "health2",
-    domain: "healthcare",
-    question: "Why is the liver considered a vital organ?",
-    options: [
-      "It detoxifies substances and helps process nutrients",
-      "It pumps blood throughout the body",
-      "It stores electrical signals from the brain",
-      "It produces red blood cells in adults"
-    ],
-    correctAnswer: "It detoxifies substances and helps process nutrients"
-  },
-  {
-    id: "health3",
-    domain: "healthcare",
-    question: "Blood pressure is usually recorded as two numbers, such as 120/80 mmHg. What does the FIRST number represent?",
-    options: [
-      "Pressure when the heart contracts",
-      "Average pressure over 24 hours",
-      "Pressure when the heart relaxes",
-      "Pressure only in the veins"
-    ],
-    correctAnswer: "Pressure when the heart contracts"
-  },
-
-  // EDUCATION
-  {
-    id: "edu1",
-    domain: "education",
-    question: "What is the MAIN purpose of a learning objective in a lesson plan?",
-    options: [
-      "Describe what learners should be able to do by the end",
-      "List all activities the teacher will enjoy",
-      "Summarise the textbook chapter titles",
-      "Explain the school’s annual budget"
-    ],
-    correctAnswer: "Describe what learners should be able to do by the end"
-  },
-  {
-    id: "edu2",
-    domain: "education",
-    question: "Which assessment method best measures a learner’s ability to apply a concept?",
-    options: [
-      "Project or case‑based task",
-      "Simple true/false quiz",
-      "Roll‑call attendance record",
-      "Anonymous course rating"
-    ],
-    correctAnswer: "Project or case‑based task"
-  },
-  {
-    id: "edu3",
-    domain: "education",
-    question: "Which teaching approach is MOST aligned with active learning?",
-    options: [
-      "Learners solve problems and discuss in groups during class",
-      "Teacher reads slides while students copy notes",
-      "Students silently memorise the textbook at home",
-      "Assessment is based only on a final written exam"
-    ],
-    correctAnswer: "Learners solve problems and discuss in groups during class"
-  },
-
-  // FINANCE
-  {
-    id: "fin1",
-    domain: "finance",
-    question: "Which financial statement shows a company’s assets, liabilities, and equity at a specific date?",
-    options: [
-      "Balance sheet",
-      "Income statement",
-      "Cash‑flow forecast",
-      "Bank reconciliation"
-    ],
-    correctAnswer: "Balance sheet"
-  },
-  {
-    id: "fin2",
-    domain: "finance",
-    question: "Diversifying an investment portfolio is mainly intended to:",
-    options: [
-      "Reduce overall risk",
-      "Guarantee profit",
-      "Increase transaction fees",
-      "Eliminate the need for research"
-    ],
-    correctAnswer: "Reduce overall risk"
-  },
-  {
-    id: "fin3",
-    domain: "finance",
-    question: "Which type of asset typically has the LOWEST risk and return?",
-    options: ["Government bonds", "Early‑stage startup equity", "Cryptocurrencies", "Small‑cap growth stocks"],
-    correctAnswer: "Government bonds"
-  },
-
-  // SCIENCE
-  {
-    id: "sci1",
-    domain: "science",
-    question: "What is a hypothesis in scientific research?",
-    options: [
-      "A testable explanation or prediction based on prior observations",
-      "A law that has been proven and never changes",
-      "A personal belief that cannot be tested",
-      "A list of tools used in an experiment"
-    ],
-    correctAnswer: "A testable explanation or prediction based on prior observations"
-  },
-  {
-    id: "sci2",
-    domain: "science",
-    question: "Why are control groups used in experiments?",
-    options: [
-      "To compare results with a group that does not receive the treatment",
-      "To increase the number of participants only",
-      "To avoid collecting baseline data",
-      "To make the experiment easier to run"
-    ],
-    correctAnswer: "To compare results with a group that does not receive the treatment"
-  },
-  {
-    id: "sci3",
-    domain: "science",
-    question: "Which feature is MOST essential for a measurement to be considered reliable?",
-    options: [
-      "It gives similar results when repeated under the same conditions",
-      "It agrees with the researcher’s expectations",
-      "It uses expensive instruments",
-      "It produces whole‑number values only"
-    ],
-    correctAnswer: "It gives similar results when repeated under the same conditions"
-  },
-
-  // ENGINEERING
-  {
-    id: "eng1",
-    domain: "engineering",
-    question: "Which quantity is MOST important when checking if a beam can safely carry a load?",
-    options: ["Stress on the material", "Color of the coating", "Cost of installation", "Manufacturer’s logo"],
-    correctAnswer: "Stress on the material"
-  },
-  {
-    id: "eng2",
-    domain: "engineering",
-    question: "In product design, what is the main purpose of a prototype?",
-    options: [
-      "Test function and usability before mass production",
-      "Serve as final packaging",
-      "Replace all technical drawings",
-      "Reduce the need for user feedback"
-    ],
-    correctAnswer: "Test function and usability before mass production"
-  },
-  {
-    id: "eng3",
-    domain: "engineering",
-    question: "Which engineering drawing element shows the size of a component?",
-    options: ["Dimensions", "Title block", "Revision history", "Projection symbol"],
-    correctAnswer: "Dimensions"
-  },
-
-  // MEDIA
-  {
-    id: "med1",
-    domain: "media",
-    question: "Which metric is most useful for judging how many people actually saw a digital ad?",
-    options: ["Impressions", "Bounce rate", "Server uptime", "Employee headcount"],
-    correctAnswer: "Impressions"
-  },
-  {
-    id: "med2",
-    domain: "media",
-    question: "In journalism, why is it important to use more than one source?",
-    options: [
-      "To verify accuracy and reduce bias",
-      "To increase article length only",
-      "To avoid editing work",
-      "To replace on‑site reporting"
-    ],
-    correctAnswer: "To verify accuracy and reduce bias"
-  },
-  {
-    id: "med3",
-    domain: "media",
-    question: "Which format typically offers the highest level of control over how a brand message is presented?",
-    options: [
-      "Paid advertising",
-      "User‑generated reviews",
-      "Unplanned viral mentions",
-      "Organic search results"
-    ],
-    correctAnswer: "Paid advertising"
-  },
-
-  // DESIGN
-  {
-    id: "des1",
-    domain: "design",
-    question: "Which principle is MOST related to ensuring text is easy to read in UI design?",
-    options: [
-      "Contrast between text and background",
-      "Using as many fonts as possible",
-      "Centering everything",
-      "Adding animations to all elements"
-    ],
-    correctAnswer: "Contrast between text and background"
-  },
-  {
-    id: "des2",
-    domain: "design",
-    question: "Wireframes are mainly used to:",
-    options: [
-      "Plan layout and structure before visual styling",
-      "Choose final colors and illustrations",
-      "Optimize database queries",
-      "Write marketing copy"
-    ],
-    correctAnswer: "Plan layout and structure before visual styling"
-  },
-  {
-    id: "des3",
-    domain: "design",
-    question: "Which term describes how easily users can navigate and complete tasks in a product?",
-    options: ["Usability", "Brand recall", "Market share", "Page rank"],
-    correctAnswer: "Usability"
-  },
-
-  // BUSINESS
-  {
-    id: "bus1",
-    domain: "business",
-    question: "What does ‘market segmentation’ involve?",
-    options: [
-      "Dividing customers into groups with similar needs or characteristics",
-      "Increasing product prices every quarter",
-      "Hiring only senior employees",
-      "Merging two companies into one"
-    ],
-    correctAnswer: "Dividing customers into groups with similar needs or characteristics"
-  },
-  {
-    id: "bus2",
-    domain: "business",
-    question: "Which indicator best shows how profitably a company operates?",
-    options: ["Net profit margin", "Number of employees", "Office size", "Social media likes"],
-    correctAnswer: "Net profit margin"
-  },
-  {
-    id: "bus3",
-    domain: "business",
-    question: "In a basic SWOT analysis, which factor is an INTERNAL characteristic of a company?",
-    options: ["Strong brand reputation", "New regulations", "Economic recession", "Competitor price cuts"],
-    correctAnswer: "Strong brand reputation"
-  },
-
-  // LEGAL
-  {
-    id: "leg1",
-    domain: "legal",
-    question: "What is the primary function of a contract?",
-    options: [
-      "Create enforceable obligations between parties",
-      "Provide marketing slogans",
-      "Record personal opinions",
-      "Describe company history"
-    ],
-    correctAnswer: "Create enforceable obligations between parties"
-  },
-  {
-    id: "leg2",
-    domain: "legal",
-    question: "Which principle requires that a person cannot be punished again for the same offence after acquittal or conviction?",
-    options: [
-      "Double jeopardy",
-      "Presumption of innocence",
-      "Freedom of speech",
-      "Judicial review"
-    ],
-    correctAnswer: "Double jeopardy"
-  },
-  {
-    id: "leg3",
-    domain: "legal",
-    question: "In most legal systems, what is the main role of a precedent?",
-    options: [
-      "Guide future court decisions in similar cases",
-      "Set tax rates for the government",
-      "Approve new laws in parliament",
-      "Publish summaries of business performance"
-    ],
-    correctAnswer: "Guide future court decisions in similar cases"
-  },
-
-  // CULINARY
-  {
-    id: "cul1",
-    domain: "culinary",
-    question: "Why is the ‘danger zone’ (roughly 5°C–60°C) important in food safety?",
-    options: [
-      "Bacteria grow fastest in this temperature range",
-      "Food always tastes best in this range",
-      "Ovens operate only in this range",
-      "Frozen foods are stored in this range"
-    ],
-    correctAnswer: "Bacteria grow fastest in this temperature range"
-  },
-  {
-    id: "cul2",
-    domain: "culinary",
-    question: "What is mise en place in professional cooking?",
-    options: [
-      "Preparing and organizing ingredients before cooking",
-      "A specific French soup",
-      "A type of knife used for filleting",
-      "A method of baking bread without yeast"
-    ],
-    correctAnswer: "Preparing and organizing ingredients before cooking"
-  },
-  {
-    id: "cul3",
-    domain: "culinary",
-    question: "In a recipe, what does ‘deglazing’ a pan usually involve?",
-    options: [
-      "Adding liquid to dissolve browned bits and create a sauce",
-      "Cooling the pan rapidly under running water",
-      "Covering food with breadcrumbs before frying",
-      "Cooking food in a sealed container with steam"
-    ],
-    correctAnswer: "Adding liquid to dissolve browned bits and create a sauce"
-  }
 ];
