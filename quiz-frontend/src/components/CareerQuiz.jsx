@@ -1,49 +1,40 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { Lock, RefreshCw, ChevronRight } from "lucide-react";
 
 import { careerQuizQuestions } from "./Questions";
 import QuizHome from "./QuizHome";
 import QuizGame from "./QuizGame";
 import QuizResults from "./QuizResults";
 import PremiumPlans from "./PremiumPlans";
+import { Lock } from "lucide-react";
 
 const CareerQuiz = () => {
-  const navigate = useNavigate();
-
-  // shuffle once
   const [questions] = useState(
     [...careerQuizQuestions].sort(() => Math.random() - 0.5)
   );
 
-  const [currentScreen, setCurrentScreen] = useState("loading");
+  const [currentScreen, setCurrentScreen] = useState("loading"); // home | quiz | results
   const [currentQuestion, setCurrentQuestion] = useState(0);
-
-  // 👉 IMPORTANT: answers is now an ARRAY, not object
-  const [answers, setAnswers] = useState([]);
-
+  const [domainCounts, setDomainCounts] = useState({});
   const [result, setResult] = useState(null);
-  const [showPremiumPopup, setShowPremiumPopup] = useState(false);
+const [answers, setAnswers] = useState({});
+
   const [isPremium, setIsPremium] = useState(false);
+  const [showPremiumPopup, setShowPremiumPopup] = useState(false);
 
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const STAGE_KEY = "careerQuiz";
   const CATEGORY_NAME = "Career Path Assessment";
 
-  // ---------------- HELPERS ----------------
-
   const getUser = () => {
     try {
-      const stored = localStorage.getItem("user");
-      return stored ? JSON.parse(stored) : null;
+      return JSON.parse(localStorage.getItem("user"));
     } catch {
       return null;
     }
   };
 
-  // ---------------- INIT ----------------
-
+  /* ---------------- INIT ---------------- */
   useEffect(() => {
     const init = async () => {
       const user = getUser();
@@ -61,15 +52,18 @@ const CareerQuiz = () => {
 
         const report = res.data?.data;
 
+        // ✅ If already completed → show results
         if (report?.stageResults?.[STAGE_KEY]) {
           setResult(report.stageResults[STAGE_KEY]);
           setCurrentScreen("results");
           return;
         }
 
+        // ✅ Resume quiz if partially done
         if (report?.stageProgress?.[STAGE_KEY]) {
           const saved = report.stageProgress[STAGE_KEY];
           setCurrentQuestion(saved.currentQuestionIndex || 0);
+          setDomainCounts(saved.domainCounts || {});
           setCurrentScreen("quiz");
           return;
         }
@@ -83,70 +77,73 @@ const CareerQuiz = () => {
     init();
   }, []);
 
-  // ---------------- QUIZ LOGIC ----------------
+  /* ---------------- ANSWER HANDLER ---------------- */
+  const handleAnswer = (questionIndex, option) => {
+  const newDomain = option.domain;
 
-  const handleAnswer = (question, selectedOption) => {
-    const isCorrect = selectedOption === question.correctAnswer;
+  setDomainCounts(prevCounts => {
+    const updated = { ...prevCounts };
 
-    setAnswers(prev => [
-      ...prev,
-      {
-        domain: question.domain,
-        isCorrect
-      }
-    ]);
-
-    // background save
-    const user = getUser();
-    if (user?._id) {
-      axios.post(`${API_URL}/api/progress/save-quiz-progress`, {
-        userId: user._id,
-        stage: STAGE_KEY,
-        currentQuestionIndex: currentQuestion,
-        answers: answers,
-        totalQuestions: questions.length,
-        categoryName: CATEGORY_NAME
-      }).catch(() => {});
+    // remove previous answer for this question (if exists)
+    const prevDomain = answers[questionIndex];
+    if (prevDomain) {
+      updated[prevDomain] = Math.max(0, (updated[prevDomain] || 1) - 1);
     }
+
+    // add new domain
+    updated[newDomain] = (updated[newDomain] || 0) + 1;
+const user = getUser();
+if (user?._id) {
+  axios.post(`${API_URL}/api/progress/save-quiz-progress`, {
+    userId: user._id,
+    stage: STAGE_KEY,
+    currentQuestionIndex: currentQuestion,
+    domainCounts: updated,
+    totalQuestions: questions.length,
+    categoryName: CATEGORY_NAME
+  }).catch(() => {});
+}
+
+    return updated;
+  });
+
+  setAnswers(prev => ({
+    ...prev,
+    [questionIndex]: newDomain
+  }));
+};
+
+  /* ---------------- NEXT / SUBMIT ---------------- */
+ const nextQuestion = async () => {
+  if (currentQuestion < questions.length - 1) {
+    setCurrentQuestion(i => i + 1);
+    return;
+  }
+
+  // SUBMIT (use latest state)
+  const finalCounts = { ...domainCounts };
+
+  const resultData = {
+    domainCounts: finalCounts,
+    totalQuestions: questions.length
   };
 
-  const nextQuestion = () => {
-    if (currentQuestion < questions.length - 1) {
-      setCurrentQuestion(prev => prev + 1);
-    } else {
-      submitQuiz();
-    }
-  };
+  setResult(resultData);
+  setCurrentScreen("results");
 
-  // ---------------- FINAL SUBMIT ----------------
-
-  const submitQuiz = async () => {
-    const user = getUser();
-
-    const payload = {
-      userId: user?._id,
+  const user = getUser();
+  if (user?._id) {
+    axios.post(`${API_URL}/api/progress/save-result`, {
+      userId: user._id,
       stage: STAGE_KEY,
       categoryName: CATEGORY_NAME,
-      resultData: {
-        answers
-      }
-    };
+      resultData
+    }).catch(() => {});
+  }
+};
 
-    try {
-      const res = await axios.post(
-        `${API_URL}/api/progress/save-result`,
-        payload
-      );
 
-      setResult(res.data.result);
-      setCurrentScreen("results");
-    } catch (err) {
-      console.error("Submit failed", err);
-    }
-  };
-
-  // ---------------- RETAKE ----------------
-
+  /* ---------------- RETAKE ---------------- */
   const handleRetake = async () => {
     const user = getUser();
     if (user?._id) {
@@ -157,14 +154,13 @@ const CareerQuiz = () => {
       });
     }
 
-    setAnswers([]);
+    setDomainCounts({});
     setCurrentQuestion(0);
     setResult(null);
     setCurrentScreen("quiz");
   };
 
-  // ---------------- RENDER ----------------
-
+  /* ---------------- RENDER ---------------- */
   if (currentScreen === "loading") {
     return <div className="min-h-screen flex items-center justify-center">Loading…</div>;
   }
@@ -174,6 +170,7 @@ const CareerQuiz = () => {
   }
 
   if (currentScreen === "results") {
+    if (isPremium) {
       return (
         <QuizResults
           showResults={result}
@@ -181,14 +178,15 @@ const CareerQuiz = () => {
           onHome={() => setCurrentScreen("home")}
         />
       );
+    }
 
-    // 🔒 LOCKED VIEW
+    // 🔒 Locked view
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
         <div className="bg-white p-8 rounded-xl shadow-xl text-center space-y-6">
           <Lock className="mx-auto w-10 h-10 text-gray-400" />
           <h2 className="text-2xl font-bold">Results Locked</h2>
-          <p>Upgrade to see your top career domains</p>
+          <p>Upgrade to see your career matches</p>
 
           <button
             onClick={() => setShowPremiumPopup(true)}
@@ -205,20 +203,23 @@ const CareerQuiz = () => {
           </button>
         </div>
 
-        {showPremiumPopup && <PremiumPlans onClose={() => setShowPremiumPopup(false)} />}
+        {showPremiumPopup && (
+          <PremiumPlans onClose={() => setShowPremiumPopup(false)} />
+        )}
       </div>
     );
   }
 
-  // QUIZ SCREEN
+  // QUIZ
   return (
-    <QuizGame
-      question={questions[currentQuestion]}
-      currentQuestionIndex={currentQuestion}
-      totalQuestions={questions.length}
-      handleAnswer={handleAnswer}
-      nextQuestion={nextQuestion}
-    />
+   <QuizGame
+  question={questions[currentQuestion]}
+  currentQuestionIndex={currentQuestion}
+  totalQuestions={questions.length}
+  handleAnswer={handleAnswer}
+  nextQuestion={nextQuestion}
+  isLastQuestion={currentQuestion === questions.length - 1}/>
+
   );
 };
 

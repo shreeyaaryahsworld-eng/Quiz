@@ -27,25 +27,58 @@ const QuizResults = ({ showResults, onRetake, onHome }) => {
     );
   }
 
-  const { topPaths, allScores, personalityType } = showResults;
+const domainCounts = showResults?.domainCounts || {};
+const totalQuestions = showResults?.totalQuestions || 0;
+if (!Object.keys(domainCounts).length) {
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <p>No results to display.</p>
+    </div>
+  );
+}
+const allScores = Object.entries(domainCounts).map(
+  ([domain, count]) => ({
+    domain,
+    count,
+    percentage: Math.round((count / totalQuestions) * 100),
+  })
+);
 
-  const top5ChartData = [...allScores]
-    .sort(([, a], [, b]) => b - a)
-    .slice(0, 5)
-    .map(([name, score]) => ({ name, score }));
+const sortedDomains = [...allScores].sort(
+  (a, b) => b.count - a.count
+);
 
-  const pathDescriptions = {
-    Technology: "Strong aptitude for tech careers such as software development, AI, or cybersecurity.",
-    Media: "Excellent communication and creativity skills — ideal for journalism, content, or PR.",
-    Healthcare: "Empathetic and caring — perfect for nursing, medicine, or therapy careers.",
-    Business: "Natural leader and strategist — great for entrepreneurship, management, or marketing.",
-    Science: "Analytical mindset — ideal for research, lab work, or scientific innovation.",
-    Teaching: "Motivator and communicator — perfect for education, training, or mentoring roles.",
-    Engineering: "Logical problem solver — suitable for mechanical, civil, or software engineering.",
-    Writing: "Creative thinker with expression — careers in content, copywriting, or publishing.",
-    Research: "Curious and data-driven — explore research, analytics, or scientific exploration.",
-    Management: "Leadership and structure — roles in operations, HR, and project management.",
-  };
+const topPaths = sortedDomains.slice(0, 5);
+
+// Simple, explainable personality text
+const personalityType =
+  topPaths[0]?.percentage >= 40
+    ? "strongly inclined"
+    : topPaths[0]?.percentage >= 30
+    ? "moderately inclined"
+    : "broadly curious";
+
+
+ const top5ChartData = topPaths.map((d) => ({
+  name: d.domain,
+  score: d.percentage,
+}));
+
+const domainDescriptions = {
+  technology: "You enjoy working with systems, logic, and digital tools.",
+  design: "You are drawn to creativity, aesthetics, and user experience.",
+  data: "You enjoy finding patterns and insights in information.",
+  engineering: "You like building, optimizing, and solving practical problems.",
+  business: "You think strategically about growth and decision-making.",
+  finance: "You are comfortable with numbers, planning, and risk.",
+  management: "You prefer organizing people and processes.",
+  law: "You value structure, reasoning, and rules.",
+  psychology: "You are interested in understanding people and behavior.",
+  education: "You enjoy teaching, guiding, and mentoring.",
+  communication: "You like expressing ideas and persuasion.",
+  social: "You are empathetic and people-oriented."
+};
+
 
   const downloadReport = async () => {
     if (!reportRef.current) return;
@@ -74,11 +107,11 @@ const QuizResults = ({ showResults, onRetake, onHome }) => {
 
         {/* Top 3 Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
-          {topPaths.slice(0, 3).map(([domain]) => (
+          {topPaths.slice(0, 3).map(({domain}) => (
             <div key={domain} className="bg-gradient-to-br from-indigo-50 to-purple-100 border border-indigo-200 rounded-2xl p-5 text-center shadow-sm">
               <Trophy className="w-8 h-8 mx-auto text-indigo-600 mb-3" />
               <h3 className="text-lg font-semibold text-gray-800 mb-2">{domain}</h3>
-              <p className="text-sm text-gray-600">{pathDescriptions[domain]}</p>
+              <p className="text-sm text-gray-600">{domainDescriptions[domain]}</p>
             </div>
           ))}
         </div>
@@ -87,7 +120,8 @@ const QuizResults = ({ showResults, onRetake, onHome }) => {
         <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-10 shadow-sm">
           <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-3">What This Means for You</h3>
           <p className="text-gray-700 text-sm sm:text-base leading-relaxed">
-            Your responses suggest you have a strong interest in <b>{topPaths[0][0]}</b> and related fields.
+            Your responses suggest you have a strong interest in <b>{topPaths[0].domain}</b>
+ and related fields.
             You’re naturally inclined toward tasks that match your <b>{personalityType}</b> nature.
           </p>
         </div>
@@ -98,11 +132,11 @@ const QuizResults = ({ showResults, onRetake, onHome }) => {
             <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-5 flex items-center">
               <BarChart3 className="w-5 h-5 mr-2" /> Top 3 Matches
             </h2>
-            {topPaths.slice(0, 3).map(([domain, score], i) => (
-              <div key={domain} className={`mb-4 p-5 border rounded-xl ${i === 0 ? "bg-green-50 border-green-200" : i === 1 ? "bg-blue-50 border-blue-200" : "bg-orange-50 border-orange-200"}`}>
+            {topPaths.slice(0, 3).map((item, i) => (
+              <div key={item.domain} className={`mb-4 p-5 border rounded-xl ${i === 0 ? "bg-green-50 border-green-200" : i === 1 ? "bg-blue-50 border-blue-200" : "bg-orange-50 border-orange-200"}`}>
                 <div className="flex justify-between items-center mb-2">
-                  <h3 className="text-base font-semibold text-gray-800">{i + 1}. {domain}</h3>
-                  <span className="font-bold text-lg">{score}%</span>
+                  <h3 className="text-base font-semibold text-gray-800">{i + 1}. {item.domain}</h3>
+                  <span className="font-bold text-lg">{item.percentage}%</span>
                 </div>
               </div>
             ))}

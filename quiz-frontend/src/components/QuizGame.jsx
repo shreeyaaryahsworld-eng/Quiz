@@ -7,19 +7,17 @@ const QuizGame = ({
   totalQuestions,
   handleAnswer,
   nextQuestion,
-  isLastQuestion,
-  showResults,
-  score,
-  maxScore
+  isLastQuestion
 }) => {
   const [selectedOption, setSelectedOption] = useState(null);
 
-  if (!question && !showResults) return null;
+  if (!question ) return null;
 
   const onOptionClick = (option) => {
-    setSelectedOption(option);
-    handleAnswer(question, option);
-  };
+  setSelectedOption(option);
+  handleAnswer(currentQuestionIndex, option);
+};
+
 
   const onNextClick = () => {
     setSelectedOption(null);
@@ -31,47 +29,6 @@ const QuizGame = ({
       ? Math.round((currentQuestionIndex / totalQuestions) * 100)
       : 0;
 
-  // RESULTS VIEW
-  if (showResults) {
-    const percent =
-      maxScore > 0 ? Math.round((score / maxScore) * 100) : 0;
-
-    return (
-      <div className="quiz-page min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-900 via-sky-900 to-slate-900 px-4 py-6">
-        <div className="quiz-card w-full max-w-xl bg-white rounded-2xl shadow-2xl border border-sky-100 p-5 sm:p-6 md:p-8 space-y-6">
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold text-slate-900">
-            Quiz Results
-          </h1>
-
-          <p className="text-slate-600 text-sm sm:text-base">
-            You answered{" "}
-            <span className="font-semibold text-blue-600">
-              {score} / {maxScore}
-            </span>{" "}
-            questions correctly ({percent}%).
-          </p>
-
-          <div className="w-full space-y-2">
-            <div className="flex justify-between text-xs font-medium text-slate-500">
-              <span>Overall score</span>
-              <span>{percent}%</span>
-            </div>
-            <div className="h-3 w-full rounded-full bg-slate-100 overflow-hidden">
-              <div
-                className="h-full rounded-full bg-gradient-to-r from-blue-500 via-sky-500 to-emerald-400 transition-all duration-500"
-                style={{ width: `${percent}%` }}
-              />
-            </div>
-          </div>
-
-          <p className="text-sm text-slate-500">
-            Use these results to see which domains you are strongest in and
-            explore matching career paths.
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   // QUESTION VIEW
   return (
@@ -129,7 +86,7 @@ const QuizGame = ({
                       : "border-slate-200 hover:bg-blue-50"
                   }`}
               >
-                {option}
+                {option.text}
               </button>
             );
           })}
