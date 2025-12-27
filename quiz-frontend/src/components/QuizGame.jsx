@@ -7,10 +7,10 @@ const QuizGame = ({
   totalQuestions,
   handleAnswer,
   nextQuestion,
-  isLastQuestion,      // boolean from parent
-  showResults,         // boolean from parent
-  score,               // number from parent
-  maxScore             // number from parent (usually totalQuestions)
+  isLastQuestion,
+  showResults,
+  score,
+  maxScore
 }) => {
   const [selectedOption, setSelectedOption] = useState(null);
 
@@ -28,7 +28,7 @@ const QuizGame = ({
 
   const progressPercent =
     totalQuestions > 0
-      ? Math.round(((currentQuestionIndex)/ totalQuestions) * 100)
+      ? Math.round((currentQuestionIndex / totalQuestions) * 100)
       : 0;
 
   // RESULTS VIEW
@@ -37,13 +37,13 @@ const QuizGame = ({
       maxScore > 0 ? Math.round((score / maxScore) * 100) : 0;
 
     return (
-      <div className="quiz-page min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-900 via-sky-900 to-slate-900 px-4 py-8">
-        <div className="quiz-card w-full max-w-xl bg-white rounded-2xl shadow-2xl border border-sky-100 p-8 space-y-6">
-          <h1 className="text-2xl md:text-3xl font-semibold text-slate-900">
+      <div className="quiz-page min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-900 via-sky-900 to-slate-900 px-4 py-6">
+        <div className="quiz-card w-full max-w-xl bg-white rounded-2xl shadow-2xl border border-sky-100 p-5 sm:p-6 md:p-8 space-y-6">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold text-slate-900">
             Quiz Results
           </h1>
 
-          <p className="text-slate-600">
+          <p className="text-slate-600 text-sm sm:text-base">
             You answered{" "}
             <span className="font-semibold text-blue-600">
               {score} / {maxScore}
@@ -75,10 +75,10 @@ const QuizGame = ({
 
   // QUESTION VIEW
   return (
-    <div className="quiz-page min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-900 via-sky-900 to-slate-900 px-4 py-8">
-      <div className="quiz-card w-full max-w-2xl bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl border border-sky-100 p-6 md:p-8 space-y-6">
-        {/* Top bar / progress text */}
-        <header className="flex items-center justify-between text-sm text-slate-500">
+    <div className="quiz-page min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-900 via-sky-900 to-slate-900 px-4 py-6">
+      <div className="quiz-card w-full max-w-2xl bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl border border-sky-100 p-4 sm:p-6 md:p-8 space-y-5">
+        {/* Header */}
+        <header className="flex justify-between text-xs sm:text-sm text-slate-500">
           <span>
             Question{" "}
             <span className="font-semibold text-slate-900">
@@ -86,60 +86,48 @@ const QuizGame = ({
             </span>{" "}
             / {totalQuestions}
           </span>
-
-          <span className="inline-flex items-center gap-1 text-blue-600 font-semibold">
-            Career Quiz
-          </span>
+          <span className="font-semibold text-blue-600">Career Quiz</span>
         </header>
 
-        {/* Progress bar */}
-        <div className="w-full">
-          <div className="flex justify-between items-center mb-1">
-            <span className="text-xs font-medium text-slate-500">
-              Progress
-            </span>
-            <span className="text-xs font-semibold text-slate-700">
-              {progressPercent}%
-            </span>
+        {/* Progress */}
+        <div>
+          <div className="flex justify-between text-xs text-slate-500 mb-1">
+            <span>Progress</span>
+            <span>{progressPercent}%</span>
           </div>
           <div className="h-2.5 w-full rounded-full bg-slate-100 overflow-hidden">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-blue-500 via-sky-500 to-cyan-400 transition-all duration-300"
+              className="h-full bg-gradient-to-r from-blue-500 via-sky-500 to-cyan-400 transition-all"
               style={{ width: `${progressPercent}%` }}
             />
           </div>
         </div>
 
         {/* Question */}
-        <h2 className="text-xl md:text-2xl font-semibold text-slate-950">
+        <h2 className="text-base sm:text-lg md:text-xl font-semibold text-slate-950">
           {question.question}
         </h2>
 
-        {/* Optional code block */}
-        {question.code && (
-          <pre className="bg-slate-900 text-emerald-300 px-4 py-3 rounded-lg text-sm overflow-x-auto">
-            {question.code}
-          </pre>
-        )}
-
         {/* Options */}
         <div className="grid gap-3">
-          {question.options.map((option) => {
+          {question.options.map((option, index) => {
             const isSelected = selectedOption === option;
 
             return (
               <button
-                key={option}
+                key={`${currentQuestionIndex}-${index}`}
                 type="button"
                 onClick={() => onOptionClick(option)}
-                className={`quiz-option w-full min-h-[3.25rem] md:min-h-[3.5rem] flex items-center
-                            p-3 md:p-4 rounded-xl border text-left text-sm md:text-base
-                            transition-colors transition-shadow
-                            ${
-                              isSelected
-                                ? "quiz-option--selected border-blue-500 bg-blue-50 text-slate-900 shadow-md"
-                                : "border-slate-200 bg-white hover:bg-blue-50 hover:border-blue-300"
-                            }`}
+                className={`w-full min-h-[3.25rem]
+                  px-4 py-3 rounded-xl border
+                  text-left text-sm sm:text-base
+                  bg-white text-slate-900
+                  transition-all
+                  ${
+                    isSelected
+                      ? "border-blue-500 bg-blue-50 shadow-md"
+                      : "border-slate-200 hover:bg-blue-50"
+                  }`}
               >
                 {option}
               </button>
@@ -147,23 +135,19 @@ const QuizGame = ({
           })}
         </div>
 
-        {/* Next / Submit button */}
-      
-<footer className="flex justify-end pt-2">
-  <button
-    type="button"
-    onClick={onNextClick}
-    disabled={selectedOption === null}
-    className="quiz-next inline-flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-medium
-               bg-blue-600 text-black shadow-sm
-               hover:bg-blue-700 hover:shadow-md
-               disabled:opacity-50 disabled:cursor-not-allowed"
-  >
-    {isLastQuestion ? "Submit" : "Next"}
-  </button>
-</footer>
-
-        
+        {/* Footer */}
+        <footer className="pt-3">
+          <button
+            type="button"
+            onClick={onNextClick}
+            disabled={selectedOption === null}
+            className="w-full sm:w-auto px-6 py-3 rounded-lg
+              bg-blue-600 text-white text-sm sm:text-base font-medium
+              hover:bg-blue-700 disabled:opacity-50"
+          >
+            {isLastQuestion ? "Submit" : "Next"}
+          </button>
+        </footer>
       </div>
     </div>
   );
