@@ -142,7 +142,7 @@ const QuizGame = ({
             onClick={onNextClick}
             disabled={selectedOption === null}
             className="w-full sm:w-auto px-6 py-3 rounded-lg
-              bg-blue-600 text-white text-sm sm:text-base font-medium
+              bg-indigo-600 text-black text-sm sm:text-base font-medium
               hover:bg-blue-700 disabled:opacity-50"
           >
             {isLastQuestion ? "Submit" : "Next"}
