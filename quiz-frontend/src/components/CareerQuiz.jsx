@@ -85,7 +85,7 @@ const [answers, setAnswers] = useState({});
     const updated = { ...prevCounts };
 
     // remove previous answer for this question (if exists)
-    const prevDomain = answers[questionIndex];
+    const prevDomain = answers[questionIndex]?.domain;
     if (prevDomain) {
       updated[prevDomain] = Math.max(0, (updated[prevDomain] || 1) - 1);
     }
@@ -109,7 +109,7 @@ if (user?._id) {
 
   setAnswers(prev => ({
     ...prev,
-    [questionIndex]: newDomain
+    [questionIndex]: option
   }));
 };
 
@@ -133,11 +133,25 @@ if (user?._id) {
 
   const user = getUser();
   if (user?._id) {
+    // Save result
     axios.post(`${API_URL}/api/progress/save-result`, {
       userId: user._id,
       stage: STAGE_KEY,
       categoryName: CATEGORY_NAME,
       resultData
+    }).catch(() => {});
+
+    // Save answers
+    const answersArray = questions.map((q, index) => ({
+      questionText: q.question,
+      selectedOptionText: answers[index]?.text || '',
+    }));
+
+    axios.post(`${API_URL}/api/user-answers`, {
+      userId: user._id,
+      userName: user.name || user.email,
+      stage: STAGE_KEY,
+      questions: answersArray
     }).catch(() => {});
   }
 };
@@ -171,9 +185,16 @@ if (user?._id) {
 
   if (currentScreen === "results") {
     if (isPremium) {
+      const answersArray = questions.map((q, index) => ({
+        questionText: q.question,
+        selectedOptionText: answers[index]?.text || '',
+        domain: answers[index]?.domain || ''
+      }));
+
       return (
         <QuizResults
           showResults={result}
+          answers={answersArray}
           onRetake={handleRetake}
           onHome={() => setCurrentScreen("home")}
         />
@@ -209,6 +230,11 @@ if (user?._id) {
       </div>
     );
   }
+const previousQuestion = () => {
+  if (currentQuestion > 0) {
+    setCurrentQuestion(i => i - 1);
+  }
+};
 
   // QUIZ
   return (
@@ -218,7 +244,9 @@ if (user?._id) {
   totalQuestions={questions.length}
   handleAnswer={handleAnswer}
   nextQuestion={nextQuestion}
-  isLastQuestion={currentQuestion === questions.length - 1}/>
+  previousQuestion={previousQuestion}
+  isLastQuestion={currentQuestion === questions.length - 1}
+  selectedAnswer={answers[currentQuestion]}/>
 
   );
 };

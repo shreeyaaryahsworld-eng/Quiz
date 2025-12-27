@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import {
   BarChart3, Trophy, BookOpen, TrendingUp,
 } from "lucide-react";
@@ -8,12 +8,14 @@ import {
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import PremiumPopup from "../components/PremiumPlans";
+import UserAnswerReview from "../components/UserAnswerReview";
 import { useNavigate } from "react-router-dom";
 
-const QuizResults = ({ showResults, onRetake, onHome }) => {
+const QuizResults = ({ showResults, onRetake, onHome, answers }) => {
   const navigate = useNavigate();
   const reportRef = useRef(null);
   const user = JSON.parse(localStorage.getItem("user"));
+  const [showModal, setShowModal] = useState(false);
 
   // Premium Check
   if (!user?.isPremium) {
@@ -81,18 +83,30 @@ const domainDescriptions = {
 
 
   const downloadReport = async () => {
-    if (!reportRef.current) return;
+    if (!reportRef.current) {
+      alert("Report element not found.");
+      return;
+    }
     try {
-      const canvas = await html2canvas(reportRef.current, { scale: 2, useCORS: true, scrollY: -window.scrollY });
+      const canvas = await html2canvas(reportRef.current, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        width: reportRef.current.scrollWidth,
+        height: reportRef.current.scrollHeight,
+        logging: true,
+      });
       const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF("p", "mm", "a4");
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
       pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
       pdf.save("Career_Gen_AI_Report.pdf");
+      alert("Report downloaded successfully!");
     } catch (err) {
-      console.error(err);
-      alert("Failed to download report.");
+      console.error("Download error:", err);
+      alert("Failed to download report: " + err.message);
     }
   };
 
@@ -120,8 +134,8 @@ const domainDescriptions = {
         <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-10 shadow-sm">
           <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-3">What This Means for You</h3>
           <p className="text-gray-700 text-sm sm:text-base leading-relaxed">
-            Your responses suggest you have a strong interest in <b>{topPaths[0].domain}</b>
- and related fields.
+            Your responses suggest you have a strong interest in <b>{topPaths[0].domain}</b> 
+  and related fields.
             You’re naturally inclined toward tasks that match your <b>{personalityType}</b> nature.
           </p>
         </div>
@@ -178,10 +192,18 @@ const domainDescriptions = {
         <div className="flex justify-center items-center gap-3 sm:gap-4 mt-10 flex-nowrap overflow-hidden">
           <button onClick={onRetake} className="bg-indigo-600 hover:bg-indigo-700 text-black font-semibold py-2 px-4 rounded-md">Retake Quiz</button>
           <button onClick={onHome} className="bg-gray-600 hover:bg-gray-700 text-black font-semibold py-2 px-4 rounded-md">Back to Home</button>
+          <button onClick={() => setShowModal(true)} className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition-all duration-200">View My Answers</button>
           <button onClick={() => navigate("/interest-form")} className="bg-green-600 hover:bg-green-700 text-black font-semibold py-2 px-4 rounded-md">Get Assessment</button>
           <button onClick={downloadReport} className="bg-blue-600 hover:bg-blue-700 text-black font-semibold py-2 px-4 rounded-md">Download Report</button>
         </div>
       </div>
+      {showModal && (
+        <UserAnswerReview
+          userName={user?.name || user?.email || "User"}
+          answers={answers}
+          onClose={() => setShowModal(false)}
+        />
+      )}
     </div>
   );
 };

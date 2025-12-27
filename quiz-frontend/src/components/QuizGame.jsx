@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import "../index.css";
 
 const QuizGame = ({
@@ -7,33 +7,21 @@ const QuizGame = ({
   totalQuestions,
   handleAnswer,
   nextQuestion,
-  isLastQuestion
+  previousQuestion,
+  isLastQuestion,
+  selectedAnswer
 }) => {
-  const [selectedOption, setSelectedOption] = useState(null);
-
-  if (!question ) return null;
-
-  const onOptionClick = (option) => {
-  setSelectedOption(option);
-  handleAnswer(currentQuestionIndex, option);
-};
-
-
-  const onNextClick = () => {
-    setSelectedOption(null);
-    nextQuestion();
-  };
+  if (!question) return null;
 
   const progressPercent =
     totalQuestions > 0
       ? Math.round((currentQuestionIndex / totalQuestions) * 100)
       : 0;
 
-
-  // QUESTION VIEW
   return (
     <div className="quiz-page min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-900 via-sky-900 to-slate-900 px-4 py-6">
       <div className="quiz-card w-full max-w-2xl bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl border border-sky-100 p-4 sm:p-6 md:p-8 space-y-5">
+
         {/* Header */}
         <header className="flex justify-between text-xs sm:text-sm text-slate-500">
           <span>
@@ -68,17 +56,16 @@ const QuizGame = ({
         {/* Options */}
         <div className="grid gap-3">
           {question.options.map((option, index) => {
-            const isSelected = selectedOption === option;
+            const isSelected = selectedAnswer === option.domain;
 
             return (
               <button
-                key={`${currentQuestionIndex}-${index}`}
+                key={index}
                 type="button"
-                onClick={() => onOptionClick(option)}
+                onClick={() => handleAnswer(currentQuestionIndex, option)}
                 className={`w-full min-h-[3.25rem]
                   px-4 py-3 rounded-xl border
                   text-left text-sm sm:text-base
-                  bg-white text-slate-900
                   transition-all
                   ${
                     isSelected
@@ -93,12 +80,21 @@ const QuizGame = ({
         </div>
 
         {/* Footer */}
-        <footer className="pt-3">
+        <footer className="pt-3 flex gap-3 justify-between">
           <button
             type="button"
-            onClick={onNextClick}
-            disabled={selectedOption === null}
-            className="w-full sm:w-auto px-6 py-3 rounded-lg
+            onClick={previousQuestion}
+            disabled={currentQuestionIndex === 0}
+            className="px-6 py-3 rounded-lg border text-sm sm:text-base disabled:opacity-40"
+          >
+            Previous
+          </button>
+
+          <button
+            type="button"
+            onClick={nextQuestion}
+            disabled={!selectedAnswer}
+            className="px-6 py-3 rounded-lg
               bg-indigo-600 text-black text-sm sm:text-base font-medium
               hover:bg-blue-700 disabled:opacity-50"
           >
