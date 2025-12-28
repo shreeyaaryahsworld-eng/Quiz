@@ -26,7 +26,8 @@ exports.getProgressReport = async (req, res) => {
 // 2. SAVE PARTIAL PROGRESS (Run on "Next" Button)
 exports.saveQuizProgress = async (req, res) => {
   try {
-    const { userId, stage, currentQuestionIndex, answers, totalQuestions, categoryName } = req.body;
+    const { userId, stage, currentQuestionIndex, domainCounts, totalQuestions, categoryName } = req.body;
+
  if (!mongoose.isValidObjectId(userId)) {
       return res.status(400).json({ success: false, message: "Invalid userId" });
     }
@@ -38,7 +39,7 @@ exports.saveQuizProgress = async (req, res) => {
       $set: {
         [`stageProgress.${stage}`]: {
           currentQuestionIndex,
-          answers,
+          domainCounts,
           totalQuestions,
           lastUpdated: new Date()
         },
@@ -63,73 +64,80 @@ exports.saveQuizProgress = async (req, res) => {
 exports.saveResult = async (req, res) => {
   try {
     const { userId, stage, resultData, categoryName } = req.body;
-     if (!mongoose.isValidObjectId(userId)) {
+
+    if (!mongoose.isValidObjectId(userId)) {
       return res.status(400).json({ success: false, message: "Invalid userId" });
     }
 
-    const { answers } = resultData; // [{ domain, isCorrect }, ...]
-
-    // 1. Total score
-    const totalCorrect = answers.filter(a => a.isCorrect).length;
-    const maxScore = answers.length;
-    const overallPercent = maxScore > 0 ? Math.round((totalCorrect / maxScore) * 100) : 0;
-
-    // 2. Per-domain scores
-    const domainTotals = {};
-    const domainCorrect = {};
-
-    for (const { domain, isCorrect } of answers) {
-      if (!domainTotals[domain]) {
-        domainTotals[domain] = 0;
-        domainCorrect[domain] = 0;
-      }
-      domainTotals[domain] += 1;
-      if (isCorrect) domainCorrect[domain] += 1;
+    if (!resultData?.domainCounts) {
+      return res.status(400).json({ success: false, message: "Invalid result data" });
     }
+// Count how many questions exist per domain
+const domainQuestionCount = {};
+careerQuizQuestions.forEach(q => {
+  domainQuestionCount[q.domain] =
+    (domainQuestionCount[q.domain] || 0) + 1;
+});
 
-    const allScores = Object.entries(domainTotals).map(([domain, total]) => {
-      const correct = domainCorrect[domain] || 0;
-      const percent = total > 0 ? Math.round((correct / total) * 100) : 0;
-      return [domain, percent];
-    });
+// Calculate percentage per domain
+const allScores = Object.entries(domainCounts).map(
+  ([domain, count]) => ({
+    domain,
+    count,
+    percentage: Math.min(100, Math.round((count / totalQuestions) * 100 * 2))
+  })
+);
 
-    // sort high → low
-    allScores.sort((a, b) => b[1] - a[1]);
+
+
+    // 2️⃣ Sort high → low
+    allScores.sort((a, b) => b.count - a.count);
+
+    // 3️⃣ Top 3 domains
     const topPaths = allScores.slice(0, 3);
 
-    // 3. Simple personalityType placeholder
-    const personalityType = "Explorer"; // or derive from pattern later
+    // 4️⃣ Personality logic (simple & explainable)
+    let personalityType = "Broad Explorer";
+    if (topPaths[0]?.percentage >= 40) {
+      personalityType = "Strongly Inclined";
+    } else if (topPaths[0]?.percentage >= 30) {
+      personalityType = "Moderately Inclined";
+    }
 
     const enrichedResult = {
-      answers,
-      totalCorrect,
-      maxScore,
-      overallPercent,
+      domainCounts,
+      totalQuestions,
       allScores,
       topPaths,
-      personalityType
+      personalityType,
+      completedAt: new Date()
     };
 
-    const updateOps = {
-      $set: {
-        [`stageResults.${stage}`]: enrichedResult,
-        [`categories.${categoryName}`]: 100
-      },
-      $unset: { [`stageProgress.${stage}`]: "" }
-    };
-
-    const updated = await ProgressReport.findOneAndUpdate(
+    // 5️⃣ Save + clear progress
+    await ProgressReport.findOneAndUpdate(
       { userId },
-      updateOps,
+      {
+        $set: {
+          [`stageResults.${stage}`]: enrichedResult,
+          [`categories.${categoryName}`]: 100
+        },
+        $unset: {
+          [`stageProgress.${stage}`]: ""
+        }
+      },
       { new: true, upsert: true }
     );
 
-    res.status(200).json({ success: true, result: enrichedResult, data: updated });
+    res.status(200).json({
+      success: true,
+      result: enrichedResult
+    });
   } catch (error) {
     console.error("Save Result Error:", error);
-    res.status(500).json({ success: false });
+    res.status(500).json({ success: false, message: "Failed to save result" });
   }
 };
+
 
 // 4. RESET PROGRESS (Run on Retake)
 exports.resetStageProgress = async (req, res) => {

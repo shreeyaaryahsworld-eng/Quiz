@@ -5,7 +5,7 @@ import {
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell,
 } from "recharts";
-import html2canvas from "html2canvas";
+import domtoimage from "dom-to-image";
 import jsPDF from "jspdf";
 import PremiumPopup from "../components/PremiumPlans";
 import UserAnswerReview from "../components/UserAnswerReview";
@@ -38,30 +38,31 @@ if (!Object.keys(domainCounts).length) {
     </div>
   );
 }
+const totalDomainScore = Object.values(domainCounts).reduce(
+  (sum, count) => sum + count,
+  0
+);
 const allScores = Object.entries(domainCounts).map(
   ([domain, count]) => ({
     domain,
     count,
-    percentage: Math.round((count / totalQuestions) * 100),
+    percentage: Math.round((count / totalDomainScore) * 100),
   })
 );
-
-const sortedDomains = [...allScores].sort(
-  (a, b) => b.count - a.count
-);
-
+const sortedDomains = allScores.sort((a, b) => b.count - a.count);
+const topDomains = sortedDomains.slice(0, 3);
 const topPaths = sortedDomains.slice(0, 5);
 
 // Simple, explainable personality text
 const personalityType =
-  topPaths[0]?.percentage >= 40
+  topDomains[0]?.percentage >= 40
     ? "strongly inclined"
-    : topPaths[0]?.percentage >= 30
+    : topDomains[0]?.percentage >= 30
     ? "moderately inclined"
     : "broadly curious";
 
 
- const top5ChartData = topPaths.map((d) => ({
+ const top3ChartData = topDomains.map((d) => ({
   name: d.domain,
   score: d.percentage,
 }));
@@ -82,46 +83,97 @@ const domainDescriptions = {
 };
 
 
-  const downloadReport = async () => {
-    if (!reportRef.current) {
-      alert("Report element not found.");
-      return;
-    }
-    try {
-      const canvas = await html2canvas(reportRef.current, {
-        scale: 2,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: '#ffffff',
-        width: reportRef.current.scrollWidth,
-        height: reportRef.current.scrollHeight,
-        logging: true,
-      });
-      const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF("p", "mm", "a4");
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+const downloadReport = async () => {
+  if (!reportRef.current) {
+    alert("Report element not found.");
+    return;
+  }
+
+  try {
+    const node = reportRef.current;
+
+    const dataUrl = await domtoimage.toPng(node, {
+      bgcolor: "#ffffff",
+      width: node.scrollWidth,
+      height: node.scrollHeight,
+      style: {
+        transform: "scale(1)",
+        transformOrigin: "top left",
+      },
+    });
+
+    const pdf = new jsPDF("p", "mm", "a4");
+
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = pdf.internal.pageSize.getHeight();
+
+    const margin = 10; // ⭐ LEFT & RIGHT MARGIN (mm)
+    const usableWidth = pdfWidth - margin * 2;
+
+    const img = new Image();
+    img.src = dataUrl;
+
+    img.onload = () => {
+      const imgWidthPx = img.width;
+      const imgHeightPx = img.height;
+
+      const scale = usableWidth / imgWidthPx;
+      const imgHeightMm = imgHeightPx * scale;
+
+      let heightLeft = imgHeightMm;
+      let position = margin;
+
+      // First page
+      pdf.addImage(
+        dataUrl,
+        "PNG",
+        margin,
+        position,
+        usableWidth,
+        imgHeightMm
+      );
+
+      heightLeft -= pdfHeight;
+
+      // Extra pages
+      while (heightLeft > 0) {
+        pdf.addPage();
+        position = heightLeft - imgHeightMm + margin;
+
+        pdf.addImage(
+          dataUrl,
+          "PNG",
+          margin,
+          position,
+          usableWidth,
+          imgHeightMm
+        );
+
+        heightLeft -= pdfHeight;
+      }
+
       pdf.save("Career_Gen_AI_Report.pdf");
       alert("Report downloaded successfully!");
-    } catch (err) {
-      console.error("Download error:", err);
-      alert("Failed to download report: " + err.message);
-    }
-  };
+    };
+  } catch (err) {
+    console.error("Download error:", err);
+    alert("Failed to download report: " + err.message);
+  }
+};
+
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 px-4 sm:px-6 py-8">
-      <div ref={reportRef} className="max-w-6xl mx-auto bg-white shadow-xl rounded-2xl p-6 sm:p-10">
-        <div className="text-center mb-10">
+      <div className="max-w-6xl mx-auto bg-white shadow-xl rounded-2xl p-6 sm:p-10">
+        <div ref={reportRef}><div className="text-center mb-10">
           <Trophy className="w-14 h-14 text-yellow-500 mx-auto mb-3" />
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">Your Career Quiz Results</h1>
           <p className="text-gray-600 text-sm sm:text-base">Here are your top career matches and detailed domain scores.</p>
         </div>
-
-        {/* Top 3 Cards */}
+       
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
-          {topPaths.slice(0, 3).map(({domain}) => (
+          {topDomains.map(({domain}) => (
             <div key={domain} className="bg-gradient-to-br from-indigo-50 to-purple-100 border border-indigo-200 rounded-2xl p-5 text-center shadow-sm">
               <Trophy className="w-8 h-8 mx-auto text-indigo-600 mb-3" />
               <h3 className="text-lg font-semibold text-gray-800 mb-2">{domain}</h3>
@@ -130,11 +182,12 @@ const domainDescriptions = {
           ))}
         </div>
 
+     
         {/* Analysis Text */}
         <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-10 shadow-sm">
           <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-3">What This Means for You</h3>
           <p className="text-gray-700 text-sm sm:text-base leading-relaxed">
-            Your responses suggest you have a strong interest in <b>{topPaths[0].domain}</b> 
+            Your responses suggest you have a strong interest in <b>{topDomains[0].domain} </b> 
   and related fields.
             You’re naturally inclined toward tasks that match your <b>{personalityType}</b> nature.
           </p>
@@ -146,7 +199,7 @@ const domainDescriptions = {
             <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-5 flex items-center">
               <BarChart3 className="w-5 h-5 mr-2" /> Top 3 Matches
             </h2>
-            {topPaths.slice(0, 3).map((item, i) => (
+            {topDomains.map((item, i) => (
               <div key={item.domain} className={`mb-4 p-5 border rounded-xl ${i === 0 ? "bg-green-50 border-green-200" : i === 1 ? "bg-blue-50 border-blue-200" : "bg-orange-50 border-orange-200"}`}>
                 <div className="flex justify-between items-center mb-2">
                   <h3 className="text-base font-semibold text-gray-800">{i + 1}. {item.domain}</h3>
@@ -162,13 +215,13 @@ const domainDescriptions = {
              </h3>
              <div className="w-full min-h-[260px] sm:min-h-[300px]">
                <ResponsiveContainer width="100%" height={300}>
-                 <BarChart data={top5ChartData} margin={{ top: 20, right: 20, left: 0, bottom: 10 }}>
+                 <BarChart data={top3ChartData} margin={{ top: 20, right: 20, left: 0, bottom: 10 }}>
                    <CartesianGrid strokeDasharray="3 3" />
                    <XAxis dataKey="name" tick={{ fontSize: 12 }} interval={0} angle={-10} />
                    <YAxis domain={[0, 100]} />
                    <Tooltip />
                    <Bar dataKey="score" radius={[6, 6, 0, 0]}>
-                     {top5ChartData.map((entry, i) => <Cell key={`cell-${i}`} fill="#6366F1" />)}
+                     {top3ChartData.map((entry, i) => <Cell key={`cell-${i}`} fill="#6366F1" />)}
                    </Bar>
                  </BarChart>
                </ResponsiveContainer>
@@ -187,6 +240,8 @@ const domainDescriptions = {
               <li>Connect with mentors.</li>
             </ul>
         </div>
+        </div>
+      </div>
 
         {/* Action Buttons */}
         <div className="flex justify-center items-center gap-3 sm:gap-4 mt-10 flex-nowrap overflow-hidden">
@@ -196,11 +251,10 @@ const domainDescriptions = {
           <button onClick={() => navigate("/interest-form")} className="bg-green-600 hover:bg-green-700 text-black font-semibold py-2 px-4 rounded-md">Get Assessment</button>
           <button onClick={downloadReport} className="bg-blue-600 hover:bg-blue-700 text-black font-semibold py-2 px-4 rounded-md">Download Report</button>
         </div>
-      </div>
       {showModal && (
         <UserAnswerReview
-          userName={user?.name || user?.email || "User"}
-          answers={answers}
+          userId={user._id}
+          stage="careerQuiz"
           onClose={() => setShowModal(false)}
         />
       )}

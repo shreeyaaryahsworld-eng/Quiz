@@ -28,16 +28,19 @@ stageProgress: {
   type: Map,
   of: new mongoose.Schema({
     currentQuestionIndex: Number,
-    answers: [{
-      domain: String,
-      isCorrect: Boolean
-    }],
+
+    // ✅ NEW — matches domain-based logic
+    domainCounts: {
+      type: Map,
+      of: Number,
+      default: {}
+    },
+
     totalQuestions: Number,
     lastUpdated: { type: Date, default: Date.now }
   }, { _id: false }),
   default: {}
 }
-
 }, { timestamps: true });
 
 module.exports = mongoose.model("ProgressReport", progressReportSchema);

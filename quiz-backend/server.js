@@ -4,6 +4,7 @@ const cors = require("cors");
 
 const connectDB = require("./config/db");
 const progressRoutes = require("./routes/progressRoutes");
+const userAnswerRoutes = require("./routes/userAnswerRoutes");
 
 const app = express();
 
@@ -16,6 +17,7 @@ connectDB();
 
 // routes
 app.use("/api/progress", progressRoutes);
+app.use("/api/user-answers", userAnswerRoutes);
 
 // test route
 app.get("/", (req, res) => {

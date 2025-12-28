@@ -154,3 +154,7 @@ button:focus-visible {
 .quiz-option-default {
   background: rgba(248, 250, 252, 0.7);
 }
+#report {
+  width: 794px;
+  margin: 0 auto;
+}

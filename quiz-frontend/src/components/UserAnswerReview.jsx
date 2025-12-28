@@ -1,52 +1,78 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
-const UserAnswerReview = ({ userName, answers, onClose }) => {
+const UserAnswerReview = ({ userId, stage, onClose }) => {
+  const [answers, setAnswers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+  useEffect(() => {
+    const fetchAnswers = async () => {
+      try {
+        const res = await axios.get(`${API_URL}/api/user-answers/${userId}/${stage}`);
+        setAnswers(res.data.data.questions || []);
+      } catch (err) {
+        setError("Failed to load answers");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (userId && stage) {
+      fetchAnswers();
+    }
+  }, [userId, stage]);
   return (
     <>
-      <style dangerouslySetInnerHTML={{ __html: `
-        .close-button {
-          transition: all 0.2s ease;
-          border-radius: 50%;
-          width: 30px;
-          height: 30px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        .close-button:hover {
-          background-color: #f3f4f6;
-          transform: scale(1.1);
-          color: #374151;
-        }
-      ` }} />
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">
-          <div className="p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold text-gray-800">Answer Review</h2>
+        <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+          <div className="sticky top-0 bg-white border-b border-gray-200 p-6 z-10">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-bold text-gray-800">Your Quiz Answers Review</h2>
               <button
                 onClick={onClose}
-                className="text-gray-500 hover:text-gray-700 text-2xl close-button"
+                className="bg-red-500 hover:bg-red-600 text-gray rounded-full w-10 h-10 flex items-center justify-center text-xl font-bold transition-all"
               >
                 ×
               </button>
             </div>
-            <div className="mb-4">
-              <h3 className="text-lg font-semibold text-gray-700">{userName}</h3>
-            </div>
-            <div className="space-y-4">
-              {answers.map((answer, index) => (
-                <div key={index} className="border border-gray-200 rounded-lg p-4">
-                  <p className="font-medium text-gray-800 mb-2">
-                    {index + 1}. {answer.questionText}
-                  </p>
-                  <p className="text-gray-600">
-                    <span className="font-semibold">Selected: </span>
-                    {answer.selectedOptionText}
-                  </p>
-                </div>
-              ))}
-            </div>
+          </div>
+          <div className="p-6">
+            {loading ? (
+              <div className="text-center py-8">
+                <p className="text-gray-600">Loading your answers...</p>
+              </div>
+            ) : error ? (
+              <div className="text-center py-8">
+                <p className="text-red-500">{error}</p>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {answers.map((answer, index) => (
+                  <div key={index} className="bg-gradient-to-br from-blue-50 to-indigo-100 border border-blue-200 rounded-xl p-6 shadow-sm">
+                    <div className="flex items-start space-x-4">
+                      <div className="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-semibold text-sm">
+                        {index + 1}
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-lg font-semibold text-gray-800 mb-3">
+                          {answer.questionText}
+                        </h3>
+                        <div className="bg-white rounded-lg p-4 border border-gray-200">
+                          <p className="text-gray-700">
+                            <span className="font-medium text-blue-600">Your Answer: </span>
+                            {answer.selectedOptionText}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
