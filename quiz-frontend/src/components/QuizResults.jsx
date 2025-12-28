@@ -51,6 +51,12 @@ const allScores = Object.entries(domainCounts).map(
 );
 const sortedDomains = allScores.sort((a, b) => b.count - a.count);
 const topDomains = sortedDomains.slice(0, 3);
+
+// Recalculate percentages based on top 3 total
+const topTotal = topDomains.reduce((sum, item) => sum + item.count, 0);
+topDomains.forEach(item => {
+  item.percentage = Math.round((item.count / topTotal) * 100);
+});
 const topPaths = sortedDomains.slice(0, 5);
 
 // Simple, explainable personality text
@@ -68,18 +74,18 @@ const personalityType =
 }));
 
 const domainDescriptions = {
-  technology: "You enjoy working with systems, logic, and digital tools.",
-  design: "You are drawn to creativity, aesthetics, and user experience.",
-  data: "You enjoy finding patterns and insights in information.",
-  engineering: "You like building, optimizing, and solving practical problems.",
-  business: "You think strategically about growth and decision-making.",
-  finance: "You are comfortable with numbers, planning, and risk.",
-  management: "You prefer organizing people and processes.",
-  law: "You value structure, reasoning, and rules.",
-  psychology: "You are interested in understanding people and behavior.",
-  education: "You enjoy teaching, guiding, and mentoring.",
-  communication: "You like expressing ideas and persuasion.",
-  social: "You are empathetic and people-oriented."
+  technology: "You enjoy working with computers, software, systems, and digital tools to solve problems.",
+  creative: "You are imaginative and enjoy expressing ideas through art, writing, or innovation.",
+  healthcare: "You are interested in helping people, improving health, and caring for others.",
+  education: "You enjoy teaching, guiding, and helping others learn and grow.",
+  finance: "You are comfortable with numbers, money management, and financial planning.",
+  science: "You are curious about how the world works and enjoy research, experiments, and discovery.",
+  engineering: "You like building things, fixing problems, and applying ideas to real-life solutions.",
+  media: "You enjoy storytelling, content creation, communication, and working with digital or mass media.",
+  design: "You are drawn to visuals, creativity, layout, and creating user-friendly experiences.",
+  business: "You think strategically about ideas, leadership, growth, and decision-making.",
+  legal: "You value rules, logic, fairness, and structured thinking.",
+  culinary: "You enjoy cooking, food creativity, and working in food-related environments."
 };
 
 
