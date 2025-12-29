@@ -211,7 +211,7 @@ if (user?._id) {
 
           <button
             onClick={() => setShowPremiumPopup(true)}
-            className="bg-indigo-600 text-white px-6 py-3 rounded-lg"
+            className="bg-indigo-600 text-black px-6 py-3 rounded-lg"
           >
             Unlock Results
           </button>

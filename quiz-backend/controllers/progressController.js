@@ -72,31 +72,31 @@ exports.saveResult = async (req, res) => {
     if (!resultData?.domainCounts) {
       return res.status(400).json({ success: false, message: "Invalid result data" });
     }
-// Count how many questions exist per domain
-const domainQuestionCount = {};
-careerQuizQuestions.forEach(q => {
-  domainQuestionCount[q.domain] =
-    (domainQuestionCount[q.domain] || 0) + 1;
-});
 
-// Calculate percentage per domain
-const allScores = Object.entries(domainCounts).map(
-  ([domain, count]) => ({
-    domain,
-    count,
-    percentage: Math.min(100, Math.round((count / totalQuestions) * 100 * 2))
-  })
-);
+    const { domainCounts, totalQuestions } = resultData;
 
+    // Calculate percentage per domain
+    const allScores = Object.entries(domainCounts).map(
+      ([domain, count]) => ({
+        domain,
+        count,
+        percentage: Math.round((count / totalQuestions) * 100),
+      })
+    );
 
-
-    // 2️⃣ Sort high → low
+    // Sort high → low
     allScores.sort((a, b) => b.count - a.count);
 
-    // 3️⃣ Top 3 domains
+    // Top 3 domains
     const topPaths = allScores.slice(0, 3);
 
-    // 4️⃣ Personality logic (simple & explainable)
+    // Recalculate percentages based on top 3 total
+    const topTotal = topPaths.reduce((sum, item) => sum + item.count, 0);
+    topPaths.forEach(item => {
+      item.percentage = Math.round((item.count / topTotal) * 100);
+    });
+
+    // Personality logic (simple & explainable)
     let personalityType = "Broad Explorer";
     if (topPaths[0]?.percentage >= 40) {
       personalityType = "Strongly Inclined";
@@ -113,7 +113,7 @@ const allScores = Object.entries(domainCounts).map(
       completedAt: new Date()
     };
 
-    // 5️⃣ Save + clear progress
+    // Save + clear progress
     await ProgressReport.findOneAndUpdate(
       { userId },
       {
